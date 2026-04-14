@@ -10,7 +10,7 @@ Building a RAG agent is not the hard part anymore. The hard part is everything a
 
 We built a RAG agent to show how [LightOn Paradigm](https://www.lighton.ai) and [Idun Agent Platform](https://cloud.idunplatform.com) take those problems off the table.
 
-Source code is on [GitHub](https://github.com/...).
+Source code is on [GitHub](https://github.com/Idun-Group/lighton-rag-agent).
 
 ## Paradigm handles the knowledge layer
 
@@ -287,4 +287,4 @@ The amount of infrastructure we didn't have to build is the point. No document p
 
 What we actually wrote: one agent file with a planner and an executor, and an MCP server that bridges Paradigm's API to the agent world.
 
-[LightOn Paradigm](https://www.lighton.ai) . [Idun Cloud](https://cloud.idunplatform.com) . [Source code](https://github.com/...)
+[LightOn Paradigm](https://www.lighton.ai) . [Idun Cloud](https://cloud.idunplatform.com) . [Source code](https://github.com/Idun-Group/lighton-rag-agent)
