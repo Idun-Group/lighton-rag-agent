@@ -4,27 +4,27 @@
   <a href="https://cloud.idunplatform.com"><img src="../images/idun-logo.png" alt="Idun Agent Platform" height="80" /></a>
 </p>
 
-<h1 align="center">LightOn Paradigm x Idun Agent Platform</h1>
+<h1 align="center">LightOn Console x Idun Agent Platform</h1>
 
 Building a RAG agent is not the hard part anymore. The hard part is everything around it. Picking a vector database, writing a document parser that doesn't destroy tables, tuning a chunker, adding a reranker, then building workspace isolation and access control on top. Then doing it all again for the agent side. API endpoints, prompt versioning, observability, authentication. By the time you're done, the actual agent logic is a fraction of the codebase.
 
-We built a RAG agent to show how [LightOn Paradigm](https://www.lighton.ai) and [Idun Agent Platform](https://cloud.idunplatform.com) take those problems off the table.
+We built a RAG agent to show how [LightOn Console](https://www.lighton.ai) and [Idun Agent Platform](https://cloud.idunplatform.com) take those problems off the table.
 
 Source code is on [GitHub](https://github.com/Idun-Group/lighton-rag-agent).
 
-## Paradigm handles the knowledge layer
+## Console handles the knowledge layer
 
-[LightOn Paradigm](https://www.lighton.ai) is the entire knowledge layer as a platform. You upload documents, Paradigm does the rest: parsing, chunking, embedding, hybrid retrieval, reranking, and access control. The pieces a RAG project usually has to build itself are already there.
+[LightOn Console](https://www.lighton.ai) is the entire knowledge layer as a platform. You upload documents, Console does the rest: parsing, chunking, embedding, hybrid retrieval, reranking, and access control. The pieces a RAG project usually has to build itself are already there.
 
 ### Getting documents in
 
-Upload files directly: PDF, DOCX, PPTX, TXT, Markdown, HTML, XLSX, CSV, and others. Or connect data sources. Paradigm has connectors for Google Drive, SharePoint, Teams, ServiceNow, and web scraping. Connectors sync on a schedule, so your knowledge base stays current without anyone touching it.
+Upload files directly: PDF, DOCX, PPTX, TXT, Markdown, HTML, XLSX, CSV, and others. Or connect data sources. Console has connectors for Google Drive, SharePoint, Teams, ServiceNow, and web scraping. Connectors sync on a schedule, so your knowledge base stays current without anyone touching it.
 
 ### What happens to them
 
-When a document arrives, Paradigm puts it through a full indexing pipeline. A hierarchical parser (v2.2.1 in the current release) converts it to structured text while preserving the document's own organization: headings, sections, nested lists, tables. A separate vision pipeline processes visual content. Charts, graphs, scanned pages, handwritten notes. There's a VLM-based OCR endpoint that converts these to Markdown while keeping spatial layout. Files track both a text processing status and a vision processing status, so you know when everything is ready.
+When a document arrives, Console puts it through a full indexing pipeline. A hierarchical parser (v2.2.1 in the current release) converts it to structured text while preserving the document's own organization: headings, sections, nested lists, tables. A separate vision pipeline processes visual content. Charts, graphs, scanned pages, handwritten notes. There's a VLM-based OCR endpoint that converts these to Markdown while keeping spatial layout. Files track both a text processing status and a vision processing status, so you know when everything is ready.
 
-After parsing, a hierarchical chunker splits the content following the document's structure rather than fixed token windows. Each chunk carries metadata: page numbers, coordinates on the page, parser version, token count, content hashes. From what we saw in the API responses, the processing is thorough, and we're confident there is more going on than what the metadata fields show.
+After parsing, a hierarchical chunker splits the content following the document's structure rather than fixed token windows. The processing pipeline is thorough: each chunk carries rich metadata including page numbers, coordinates on the page, parser version, token count, and content hashes.
 
 ### Retrieval that works out of the box
 
@@ -36,22 +36,22 @@ In our testing with French HR documents, where the language switches between con
 
 Documents live in workspaces. Company workspaces are visible to everyone. Custom workspaces are restricted to specific teams or groups. Personal workspaces are single-user. Only users with the Document manager role can upload or delete files. When you query, results are scoped to the workspaces you have access to. RBAC that works without you writing a single line.
 
-### Built-in agents, and a full API
+### An API-first platform
 
-Paradigm comes with its own agents. They search documents, handle visual content like tables and charts, analyze large files, interpret scanned pages, search the web through MCP integrations, and chain multiple tool calls when a question needs it. For people using Paradigm directly, they cover a lot.
+Console is designed as an API-first platform: all its capabilities — parsing, retrieval, reranking, generation — are exposed as API endpoints that any application or agent can call. This is a deliberate architectural choice. Rather than locking intelligence behind a single interface, Console lets each team or partner build the experience that fits their users.
 
-But we needed something different. We needed the knowledge in Paradigm to be accessible from the outside. A custom agent running on our own infrastructure, connecting to Paradigm's data alongside other services. Paradigm's API makes that possible, and that's where the second half of this project starts.
+That's exactly what we did. We built a custom agent on our own infrastructure that connects to Console's knowledge layer alongside other services. Console's API made this straightforward, and that's where the second half of this project starts.
 
 [Website](https://www.lighton.ai) . [Documentation](https://docs.lighton.ai) . [API Reference](https://docs.lighton.ai/api-reference-v3)
 
-## Connecting to Paradigm from the outside
+## Connecting to Console from the outside
 
-Paradigm has a v3 API that covers workspace management, file operations, retrieval, and conversational threads with LLM generation. To make it easy for agents to use, we built a Python SDK and an MCP server on top of it.
+Console has a v3 API that covers workspace management, file operations, retrieval, and conversational threads with LLM generation. To make it easy for agents to use, we used Console's Python SDK and built an MCP server on top of it. Console's API is also compatible with the OpenAI Python SDK for chat, embeddings, and file endpoints, which gives teams another familiar path in.
 
 The SDK wraps the API with typed Pydantic models:
 
 ```python
-from sdk import LightOn
+from lighton import LightOn
 
 with LightOn(api_key="your_key") as client:
     # upload and index
@@ -89,7 +89,7 @@ That covers the knowledge layer. The agent still needs somewhere to run, with pr
 
 [Idun](https://github.com/Idun-Group/idun-agent-platform) is an open-source platform that takes LangGraph and Google ADK agents and makes them production services. We used [Idun Cloud](https://cloud.idunplatform.com), where everything is configured through the UI.
 
-You write a LangGraph graph that calls Paradigm through MCP tools, export it as a `StateGraph` (compiled or uncompiled, Idun handles both), and Idun does the rest. It discovers available tools at startup, exposes an [AG-UI protocol](https://docs.ag-ui.com) endpoint, and gives you a playground to test from.
+You write a LangGraph graph that calls Console through MCP tools, export it as a `StateGraph` (compiled or uncompiled, Idun handles both), and Idun does the rest. It discovers available tools at startup, exposes an [AG-UI protocol](https://docs.ag-ui.com) endpoint, and gives you a playground to test from.
 
 ### Prompts managed in the UI
 
@@ -172,6 +172,8 @@ async def executor(state):
     ] + state["messages"]
     return {"messages": [await llm_with_tools.ainvoke(messages)]}
 ```
+
+We chose Gemini for the agent's reasoning layer to demonstrate that Console is model-agnostic: you bring whatever LLM fits your use case for orchestration, and Console handles retrieval and generation on its own models underneath. The `ask` tool still uses Console's built-in LLM for grounded answers over your documents.
 
 `get_langchain_tools()` returns whatever tools Idun discovered from the MCP servers at startup. The executor binds them to the LLM and lets it call them as needed.
 
@@ -263,7 +265,7 @@ Once connected, every turn from every agent flows to Langfuse with full traces.
 
 ## What it looks like
 
-We loaded French HR documents into Paradigm: employment contracts, company agreements, telework policies, disciplinary procedures, CSE meeting minutes, a reorganization plan. Mix of tables, structured forms, and free text. Documents land in a custom workspace scoped to the agent.
+We loaded French HR documents into Console: employment contracts, company agreements, telework policies, disciplinary procedures, CSE meeting minutes, a reorganization plan. Mix of tables, structured forms, and free text. Documents land in a custom workspace scoped to the agent.
 
 **Simple retrieval.** We asked: *"What are the standard working hours at NexaTech and who do they apply to?"*
 
@@ -283,8 +285,8 @@ Two unrelated documents. The planner wrote a plan that covered both topics, the 
 
 ## What we took away
 
-The amount of infrastructure we didn't have to build is the point. No document parsing, no vector database, no chunking strategy, no reranker tuning, no access control system. That's Paradigm. No API server, no prompt storage, no observability plumbing, no authentication layer. That's Idun.
+The amount of infrastructure we didn't have to build is the point. No document parsing, no vector database, no chunking strategy, no reranker tuning, no access control system. That's Console. No API server, no prompt storage, no observability plumbing, no authentication layer. That's Idun.
 
-What we actually wrote: one agent file with a planner and an executor, and an MCP server that bridges Paradigm's API to the agent world.
+What we actually wrote: one agent file with a planner and an executor, and an MCP server that bridges Console's API to the agent world.
 
-[LightOn Paradigm](https://www.lighton.ai) . [Idun Cloud](https://cloud.idunplatform.com) . [Source code](https://github.com/Idun-Group/lighton-rag-agent)
+[LightOn Console](https://www.lighton.ai) . [Idun Cloud](https://cloud.idunplatform.com) . [Source code](https://github.com/Idun-Group/lighton-rag-agent)

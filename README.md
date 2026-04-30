@@ -6,7 +6,7 @@
 
 <h1 align="center">LightOn x Idun RAG Agent</h1>
 
-A document assistant connecting [LightOn Paradigm](https://www.lighton.ai) (knowledge layer) to [Idun Agent Platform](https://cloud.idunplatform.com) (agent runtime), via a LangGraph agent powered by Gemini.
+A document assistant connecting [LightOn Console](https://www.lighton.ai) (knowledge layer) to [Idun Agent Platform](https://cloud.idunplatform.com) (agent runtime), via a LangGraph agent powered by Gemini.
 
 Full write-up: [`docs/blog/lighton-x-idun-rag-agent.md`](docs/blog/lighton-x-idun-rag-agent.md).
 
@@ -14,7 +14,7 @@ Full write-up: [`docs/blog/lighton-x-idun-rag-agent.md`](docs/blog/lighton-x-idu
 
 ```
 sdk/
-  client.py       Paradigm v3 API client
+  client.py       Console v3 API client
   models.py       Pydantic response models
   exceptions.py   Custom exceptions
   tests/          Unit and integration tests
