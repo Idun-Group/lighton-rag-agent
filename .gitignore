@@ -11,3 +11,8 @@ wheels/
 
 .env
 .DS_Store
+
+# Idun standalone local state (created by `idun init`)
+idun_standalone.db
+idun_standalone.db-journal
+config.yaml
