@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.png" alt="LightOn" height="60" /></a>
+  <img src="docs/images/banner.png" alt="LightOn" width="100%" /></a>
 
 <h1 align="center">LightOn x Idun RAG Agent</h1>
 
