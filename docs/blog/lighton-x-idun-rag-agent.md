@@ -216,10 +216,10 @@ The graph is exported at the module level and Idun takes it from there. No API s
 ## Setting it up in Idun Engine
 
 Make sure to grab Idun Engine from pypi: ```pip install idun-agent-engine```.
-Once installed, head into the agent location and run: ```idun init```. You can select a specific port if 8000 is used with ```--port```.
+Once installed, head into the agent location and run: ```idun init```. You can select a specific port if 8000 is used with ```--port```. The Chat UI is available on ```localhost:PORT```, the admin panel is in ```localhost:PORT/admin```
 ### Create the agent
 
-Idun Engine scans your code for an exported graph, identifies the framework, and shows you what it found.
+Head to ```localhost:PORT/admin```, you'll be welcomed by the setup wizard. Idun Engine scans your code for an exported graph, identifies the framework, and shows you what it found.
 
 ![Agent detected](../images/agent-create-basics.png)
 
