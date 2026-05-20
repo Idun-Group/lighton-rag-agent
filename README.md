@@ -1,8 +1,5 @@
 <p align="center">
-  <a href="https://www.lighton.ai"><img src="docs/images/lighton-logo.png" alt="LightOn" height="60" /></a>
-  &nbsp;&nbsp;&nbsp;&nbsp;✕&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://cloud.idunplatform.com"><img src="docs/images/idun-logo.png" alt="Idun Agent Platform" height="60" /></a>
-</p>
+  <img src="docs/images/banner.png" alt="LightOn" height="60" /></a>
 
 <h1 align="center">LightOn x Idun RAG Agent</h1>
 
