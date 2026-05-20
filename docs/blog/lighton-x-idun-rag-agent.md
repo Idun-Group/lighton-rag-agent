@@ -1,14 +1,14 @@
 <p align="center">
   <a href="https://www.lighton.ai"><img src="../images/lighton-logo.png" alt="LightOn" height="80" /></a>
   &nbsp;&nbsp;&nbsp;&nbsp;✕&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://cloud.idunplatform.com"><img src="../images/idun-logo.png" alt="Idun Agent Platform" height="80" /></a>
+  <a href="https://idun-group.com/engine"><img src="../images/idun-logo.png" alt="Idun Engine" height="80" /></a>
 </p>
 
-<h1 align="center">LightOn Console x Idun Agent Platform</h1>
+<h1 align="center">LightOn Console x Idun Engine</h1>
 
 Building a RAG agent is not the hard part anymore. The hard part is everything around it. Picking a vector database, writing a document parser that doesn't destroy tables, tuning a chunker, adding a reranker, then building workspace isolation and access control on top. Then doing it all again for the agent side. API endpoints, prompt versioning, observability, authentication. By the time you're done, the actual agent logic is a fraction of the codebase.
 
-We built a RAG agent to show how [LightOn Console](https://www.lighton.ai) and [Idun Agent Platform](https://cloud.idunplatform.com) take those problems off the table.
+We built a RAG agent to show how [LightOn Console](https://www.lighton.ai) and [Idun Engine](https://idun-group.com/engine) take those problems off the table.
 
 Source code is on [GitHub](https://github.com/Idun-Group/lighton-rag-agent).
 
@@ -87,7 +87,7 @@ That covers the knowledge layer. The agent still needs somewhere to run, with pr
 
 ## Idun takes the agent to production
 
-[Idun](https://github.com/Idun-Group/idun-agent-platform) is an open-source platform that takes LangGraph and Google ADK agents and makes them production services. We used [Idun Cloud](https://cloud.idunplatform.com), where everything is configured through the UI.
+[Idun](https://github.com/Idun-Group/idun-agent-platform) is an open-source platform that takes LangGraph and Google ADK agents and makes them production services. We used [Idun Engine in Standalone mode](https://docs.idun-group.com/standalone/overview), where everything is configured through the UI.
 
 You write a LangGraph graph that calls Console through MCP tools, export it as a `StateGraph` (compiled or uncompiled, Idun handles both), and Idun does the rest. It discovers available tools at startup, exposes an [AG-UI protocol](https://docs.ag-ui.com) endpoint, and gives you a playground to test from.
 
@@ -101,7 +101,8 @@ Point Idun at an MCP server, it connects and lists the available tools. For our 
 
 ### Observability and checkpointing
 
-Langfuse, Arize Phoenix, or LangSmith plug in from the UI. You get full traces of every turn: which nodes fired, what the LLM saw, what the tools returned, token counts, timing. Checkpointing is configurable per agent; we used in-memory checkpointing for conversation persistence across turns within a session.
+Langfuse, Arize Phoenix, or LangSmith plug in from the UI. We also bring a full-fledged in-house tracing and monitoring features. You get full traces of every turn: which nodes fired, what the LLM saw, what the tools returned, token counts, timing.
+Checkpointing is configurable per agent; we used in-memory checkpointing for conversation persistence across turns within a session.
 
 ### SSO on the agent endpoint
 
@@ -111,7 +112,8 @@ Idun can sit an SSO layer in front of the agent so only authenticated users can 
 
 Idun also supports Slack, Discord, Google Chat, and WhatsApp. The same agent that runs in the playground can be dropped into a channel.
 
-[Cloud](https://cloud.idunplatform.com) . [Documentation](https://docs.idunplatform.com) . [GitHub](https://github.com/Idun-Group/idun-agent-platform)
+[Idun Engine](https://idun-group.com/engine) . [Documentation](https://docs.idun-group.com).
+[GitHub](https://github.com/Idun-Group/idun-agent-platform)
 
 ## The agent
 
@@ -211,23 +213,19 @@ graph = build_graph()
 
 The graph is exported at the module level and Idun takes it from there. No API server code, no tool registration, no prompt loading boilerplate, no auth layer.
 
-## Setting it up in Idun Cloud
+## Setting it up in Idun Engine
 
-All in the UI at [cloud.idunplatform.com](https://cloud.idunplatform.com).
-
+Make sure to grab Idun Engine from pypi: ```pip install idun-agent-engine```.
+Once installed, head into the agent location and run: ```idun init```. You can select a specific port if 8000 is used with ```--port```.
 ### Create the agent
 
-A three-step wizard. Pick LangGraph as the framework and give the agent a name.
+Idun Engine scans your code for an exported graph, identifies the framework, and shows you what it found.
 
-![Agent basics](../images/agent-create-basics.png)
+![Agent detected](../images/agent-create-basics.png)
 
-Point it at the graph definition. The format is `path/to/file.py:variable_name`. Our graph is exported as `graph` in `agent.py`, so `agent.py:graph`.
+Use it and the agent comes up ready, with the graph visualized in the playground.
 
-![Agent framework config](../images/agent-create-config.png)
-
-Idun gives you the connection details and a verify button. Click it and you should see the agent come up healthy.
-
-![Agent enrolled](../images/agent-create-enrollment.png)
+![Agent ready](../images/agent-create-enrollment.png)
 
 ### Add the LightOn MCP server
 
@@ -235,13 +233,9 @@ From the MCP Servers page, pick the streamable HTTP transport and enter the serv
 
 ![Add MCP server](../images/mcp-add-server.png)
 
-Once connected, the server shows up in the list with the number of tools Idun discovered. Our LightOn server exposes 9 tools.
+Once connected, Idun probes the server and lists the tools it discovered. Our LightOn server exposes 9 tools, available to the executor on the next run.
 
-![MCP servers list](../images/mcp-servers-list.png)
-
-From the agent page, select which MCP servers this agent has access to. Save and the tools are available to the executor on the next run.
-
-![Assigning MCP to agent](../images/mcp-assign.png)
+![Tools discovered](../images/mcp-servers-list.png)
 
 ### Create prompts
 
@@ -249,7 +243,7 @@ In the prompt editor, create `system-prompt` and `plan-prompt`. Jinja templating
 
 ![Creating a prompt](../images/prompt-create.png)
 
-Prompts are agent-scoped. Assign them to the `lighton-agent` and they become available through `get_prompt()`. Every save creates a new immutable version.
+Prompts are agent-scoped — they're immediately available to the agent through `get_prompt()`. Every save creates a new immutable version.
 
 ![Prompt list](../images/prompt-list.png)
 
@@ -289,4 +283,4 @@ The amount of infrastructure we didn't have to build is the point. No document p
 
 What we actually wrote: one agent file with a planner and an executor, and an MCP server that bridges Console's API to the agent world.
 
-[LightOn Console](https://www.lighton.ai) . [Idun Cloud](https://cloud.idunplatform.com) . [Source code](https://github.com/Idun-Group/lighton-rag-agent)
+[LightOn Console](https://www.lighton.ai) . [Idun Engine](idun-group.com/engine) . [Source code](https://github.com/Idun-Group/lighton-rag-agent)

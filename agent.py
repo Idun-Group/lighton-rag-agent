@@ -11,15 +11,15 @@ from langgraph.prebuilt import ToolNode
 from idun_agent_engine.mcp import get_langchain_tools
 from idun_agent_engine.prompts import get_prompt
 
-SYSTEM_PROMPT = get_prompt("system-prompt")
-if not SYSTEM_PROMPT:
-    raise RuntimeError("Prompt 'system-prompt' not found. Make sure it is configured.")
-system_prompt_text = SYSTEM_PROMPT.content
 
-PLAN_PROMPT = get_prompt("plan-prompt")
-if not PLAN_PROMPT:
-    raise RuntimeError("Prompt 'plan-prompt' not found. Make sure it is configured.")
-plan_prompt_text = PLAN_PROMPT.content
+def _prompt_text(prompt_id: str) -> str:
+    prompt = get_prompt(prompt_id)
+    if not prompt:
+        raise RuntimeError(
+            f"Prompt {prompt_id!r} not found. Make sure it is configured."
+        )
+    return prompt.content
+
 
 planner_llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 executor_llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview")
@@ -39,7 +39,7 @@ class OutputState(TypedDict):
 
 async def planner(state: GraphState):
     messages = [
-        {"role": "system", "content": plan_prompt_text},
+        {"role": "system", "content": _prompt_text("plan-prompt")},
     ] + state["messages"]
     response = await planner_llm.ainvoke(messages)
     return {"plan": response.content}
@@ -50,7 +50,7 @@ async def executor(state: GraphState):
     llm_with_tools = executor_llm.bind_tools(tools)
     plan_context = f"\n\nYour plan for this request:\n{state.get('plan', '')}"
     messages = [
-        {"role": "system", "content": system_prompt_text + plan_context},
+        {"role": "system", "content": _prompt_text("system-prompt") + plan_context},
     ] + state["messages"]
     return {"messages": [await llm_with_tools.ainvoke(messages)]}
 
